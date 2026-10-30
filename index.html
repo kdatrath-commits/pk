@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ฝ่ายปกครอง ท.7</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ฝ่ายปกครอง">
+<meta name="theme-color" content="#16324a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --ink:#16324a; --text:#1d2733; --muted:#5d6b7a; --line:#d5dbe2;
+  --wait:#a86a12; --wait-bg:#fff3dc; --done:#2a7048; --done-bg:#e3f3ea; --red:#b8322a; --red-bg:#fbe5e3;
+  --focus:#2f6fb2; color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0f1820; --surface:#18232e; --ink:#9cc3e6; --text:#e4eaf0; --muted:#9aa8b6; --line:#2c3a48;
+    --wait:#e9b25c; --wait-bg:#3a2c14; --done:#7fcf9f; --done-bg:#16301f; --red:#f08a82; --red-bg:#3a1c1a;
+    --focus:#7fb3e6; color-scheme: dark; }
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:Sarabun,"Noto Sans Thai",Tahoma,sans-serif;font-size:16px;line-height:1.5;
+  padding-top:env(safe-area-inset-top,0px)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ink);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px}
+@media (prefers-color-scheme: dark){ header{background:#16324a} }
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#16324a;z-index:10}
+header h1{font-size:18px;margin:0;font-weight:700;flex:1}
+header .who{font-size:13px;opacity:.85;text-align:right}
+header button{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:4px 10px;font:inherit;font-size:13px}
+main{max-width:640px;margin:0 auto;padding:14px 14px 96px}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);display:flex;
+  padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav button{flex:1;border:0;background:none;font:inherit;font-size:14px;color:var(--muted);padding:10px 4px 12px;border-top:3px solid transparent}
+nav button[aria-current="true"]{color:var(--ink);border-top-color:var(--ink);font-weight:700}
+h2{font-size:20px;margin:4px 0 12px;color:var(--ink)}
+label{display:block;font-weight:600;margin:12px 0 4px}
+select,input,textarea{width:100%;font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:96px;resize:vertical}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.checks label{display:flex;align-items:center;gap:10px;font-weight:400;margin:6px 0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.checks input{width:auto;margin:0}
+.btn{display:block;width:100%;margin-top:18px;padding:13px;font:inherit;font-weight:700;font-size:17px;border:0;border-radius:12px;background:var(--ink);color:#fff}
+@media (prefers-color-scheme: dark){ .btn{background:#2f6fb2} }
+.btn:disabled{opacity:.5}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.photos img{width:76px;height:76px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;border-top:0;font:inherit;color:inherit;text-align:left}
+.item:last-child{border-bottom:0}
+.item .no{width:28px;color:var(--muted);font-size:14px}
+.item .main{flex:1;min-width:0}
+.item .sub{font-size:13px;color:var(--muted)}
+.score{min-width:44px;text-align:center;font-weight:700;font-size:17px;padding:2px 6px;border-radius:8px}
+.s-ok{color:var(--done)} .s-80{color:var(--wait);background:var(--wait-bg)} .s-60{color:var(--red);background:var(--red-bg)}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;font-weight:600}
+.tag.wait{color:var(--wait);background:var(--wait-bg)} .tag.done{color:var(--done);background:var(--done-bg)}
+.big{display:flex;align-items:baseline;gap:10px;margin:6px 0 14px}
+.big b{font-size:56px;line-height:1;font-weight:700}
+.big span{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.card h3{margin:0 0 6px;font-size:16px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td{padding:6px 0;border-bottom:1px solid var(--line)} td:last-child{text-align:right;font-weight:600}
+.muted{color:var(--muted);font-size:14px}
+.toast{position:fixed;left:14px;right:14px;bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--text);color:var(--bg);padding:12px 14px;border-radius:12px;z-index:20;max-width:612px;margin:0 auto}
+.sheet{position:fixed;inset:0;background:var(--bg);z-index:15;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px calc(env(safe-area-inset-bottom,0px) + 30px)}
+.sheet .inner{max-width:640px;margin:0 auto}
+.back{border:0;background:none;font:inherit;color:var(--ink);font-weight:700;padding:6px 0;margin-bottom:6px}
+#login{max-width:420px;margin:12vh auto 0;padding:24px;text-align:center}
+#login h1{color:var(--ink);font-size:26px;margin:0 0 4px}
+#login p{color:var(--muted)}
+#gbtn{display:flex;justify-content:center;margin-top:20px}
+.err{color:var(--red);margin-top:14px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <h1>ฝ่ายปกครอง</h1>
+  <p>โรงเรียนเทศบาล ๗ (ศิรินาวินวิทยา)<br>เข้าสู่ระบบด้วยบัญชี Google ที่ผู้ดูแลระบบลงทะเบียนไว้</p>
+  <div id="gbtn"></div>
+  <div id="loginErr" class="err"></div>
+</section>
+
+<div id="app" hidden>
+  <header>
+    <h1>ฝ่ายปกครอง</h1>
+    <div class="who"><div id="whoName"></div><div id="whoRole"></div></div>
+    <button id="logout" type="button">ออก</button>
+  </header>
+  <main id="view"></main>
+  <nav id="nav"></nav>
+</div>
+
+<script>
+const CONFIG = {
+  API_URL: 'https://script.google.com/macros/s/AKfycbxYZv4NWuV8CWRSN57FjYGwOMubKjyErG27rIes2Zacik-QPsUe11YQoX9JcmcU9ssGrQ/exec',
+  CLIENT_ID: '550330485948-au5k1sqtiv6j08f02nbng6rqrj87o2ul.apps.googleusercontent.com'
+};
+
+let TOKEN = null, ME = null, TAB = 'report';
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ACTIONS4 = ['ว่ากล่าวตักเตือน','ทำทัณฑ์บน','ตัดคะแนนความประพฤติ','ทำกิจกรรมเพื่อให้ปรับเปลี่ยนพฤติกรรม'];
+const INITIAL = ['ว่ากล่าวตักเตือน','ยึดสิ่งของไว้เป็นหลักฐาน','แยกนักเรียนออกจากเหตุการณ์','แจ้งครูประจำชั้น','ส่งห้องพยาบาล'];
+const PLACES = ['หน้าประตูโรงเรียน','ห้องเรียน','ห้องน้ำ','โรงอาหาร','สนาม','หลังอาคาร','นอกโรงเรียน'];
+
+/* ---------- เข้าสู่ระบบ ---------- */
+function jwtExp(t){ try{ return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).exp*1000; }catch(e){ return 0; } }
+function saveToken(t){ TOKEN = t; try{ localStorage.setItem('pk_token', t); }catch(e){} }
+function loadToken(){ try{ const t = localStorage.getItem('pk_token'); if (t && jwtExp(t) > Date.now() + 60000) return t; }catch(e){} return null; }
+function clearToken(){ TOKEN = null; try{ localStorage.removeItem('pk_token'); }catch(e){} }
+
+function initGoogle(){
+  if (!window.google || !google.accounts){ setTimeout(initGoogle, 200); return; }
+  google.accounts.id.initialize({ client_id: CONFIG.CLIENT_ID, auto_select: true,
+    callback: r => { saveToken(r.credential); start(); } });
+  google.accounts.id.renderButton($('#gbtn'), { theme:'outline', size:'large', text:'signin_with', shape:'pill', locale:'th' });
+}
+function showLogin(msg){
+  $('#app').hidden = true; $('#login').hidden = false; $('#loginErr').textContent = msg || '';
+  initGoogle();
+}
+$('#logout').onclick = () => { clearToken(); if (window.google) google.accounts.id.disableAutoSelect(); showLogin(''); };
+
+async function api(action, extra){
+  if (!TOKEN) throw new Error('AUTH');
+  const res = await fetch(CONFIG.API_URL, { method:'POST', body: JSON.stringify(Object.assign({ token: TOKEN, action }, extra || {})) });
+  const j = await res.json();
+  if (j.error){
+    if (j.error.indexOf('AUTH') === 0){ clearToken(); showLogin(j.error.replace('AUTH: ','')); }
+    throw new Error(j.error.replace('AUTH: ',''));
+  }
+  return j;
+}
+function toast(msg, ms){
+  const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role','status'); t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), ms || 3500);
+}
+
+async function start(){
+  try{
+    ME = await api('me');
+    $('#login').hidden = true; $('#app').hidden = false;
+    $('#whoName').textContent = ME.user.name; $('#whoRole').textContent = ME.user.roleLabel;
+    buildNav(); go(TAB);
+  }catch(e){ if (!$('#app').hidden) toast(e.message); else $('#loginErr').textContent = e.message; }
+}
+
+/* ---------- เมนูล่าง ---------- */
+function tabs(){
+  const r = ME.user.role, t = [['report','รายงานเหตุ']];
+  if (ME.viewClasses.length) t.push(['class', r === 'homeroom' ? 'ชั้นของฉัน' : 'นักเรียน']);
+  if (r === 'admin') t.push(['cases','รอปิดเรื่อง']);
+  if (r === 'admin' || r === 'director') t.push(['summary','สรุป']);
+  return t;
+}
+function buildNav(){
+  $('#nav').innerHTML = tabs().map(([k,l]) => `<button type="button" data-k="${k}">${l}</button>`).join('');
+  $('#nav').querySelectorAll('button').forEach(b => b.onclick = () => go(b.dataset.k));
+}
+function go(k){
+  if (!tabs().some(t => t[0] === k)) k = 'report';
+  TAB = k;
+  $('#nav').querySelectorAll('button').forEach(b => b.setAttribute('aria-current', b.dataset.k === k));
+  ({ report: vReport, class: vClass, cases: vCases, summary: vSummary })[k]();
+  window.scrollTo(0,0);
+}
+
+/* ---------- รูปภาพ ---------- */
+async function shrink(file){
+  const bmp = await createImageBitmap(file);
+  const s = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width*s); c.height = Math.round(bmp.height*s);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  const url = c.toDataURL('image/jpeg', 0.8);
+  return { url, data: url.split(',')[1], mime: 'image/jpeg' };
+}
+function photoPicker(inputSel, boxSel, store){
+  $(inputSel).onchange = async e => {
+    for (const f of [...e.target.files].slice(0, 5 - store.length)){
+      const p = await shrink(f); store.push(p);
+      const img = document.createElement('img'); img.src = p.url; img.alt = 'รูปที่แนบ'; $(boxSel).appendChild(img);
+    }
+    e.target.value = '';
+  };
+}
+
+/* ---------- รายงานเหตุ ---------- */
+function vReport(){
+  const now = new Date(), pad = n => String(n).padStart(2,'0');
+  const today = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  const time = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  $('#view').innerHTML = `
+    <h2>รายงานเหตุ</h2>
+    <div class="row">
+      <div><label for="r-cls">ชั้น</label><select id="r-cls"><option value="">เลือกชั้น</option>${ME.classes.map(c=>`<option>${esc(c)}</option>`).join('')}</select></div>
+      <div style="flex:2"><label for="r-stu">นักเรียน</label><select id="r-stu" disabled><option value="">เลือกชั้นก่อน</option></select></div>
+    </div>
+    <label for="r-type">ประเภท</label>
+    <select id="r-type"><option value="">เลือกประเภท</option>${ME.types.map(t=>`<option>${esc(t.name)}</option>`).join('')}</select>
+    <div class="row">
+      <div><label for="r-date">วันที่</label><input id="r-date" type="date" value="${today}"></div>
+      <div><label for="r-time">เวลา</label><input id="r-time" type="time" value="${time}"></div>
+    </div>
+    <label for="r-place">สถานที่</label>
+    <input id="r-place" list="places" placeholder="เช่น ห้องน้ำ อาคาร 2">
+    <datalist id="places">${PLACES.map(p=>`<option value="${esc(p)}">`).join('')}</datalist>
+    <label for="r-detail">รายละเอียดเหตุการณ์</label>
+    <textarea id="r-detail" placeholder="เล่าสิ่งที่พบตามจริง ใคร ทำอะไร มีใครเกี่ยวข้อง"></textarea>
+    <label>การดำเนินการเบื้องต้น</label>
+    <div class="checks">${INITIAL.map(a=>`<label><input type="checkbox" value="${esc(a)}"> ${esc(a)}</label>`).join('')}</div>
+    <label for="r-photo">รูปหลักฐาน (ไม่เกิน 5 รูป ถ่ายสิ่งของหรือสถานที่ หลีกเลี่ยงหน้านักเรียน)</label>
+    <input id="r-photo" type="file" accept="image/*" capture="environment" multiple>
+    <div id="r-photos" class="photos"></div>
+    <button class="btn" id="r-send" type="button">ส่งรายงาน</button>`;
+  const photos = [];
+  photoPicker('#r-photo', '#r-photos', photos);
+  $('#r-cls').onchange = () => {
+    const list = ME.roster[$('#r-cls').value] || [];
+    $('#r-stu').disabled = !list.length;
+    $('#r-stu').innerHTML = '<option value="">เลือกนักเรียน</option>' + list.map(s=>`<option value="${esc(s.id)}">${esc(s.no)}. ${esc(s.name)}</option>`).join('');
+  };
+  $('#r-send').onclick = async () => {
+    const data = { sid: $('#r-stu').value, type: $('#r-type').value, date: $('#r-date').value, time: $('#r-time').value,
+      place: $('#r-place').value.trim(), detail: $('#r-detail').value.trim(),
+      initial: [...document.querySelectorAll('.checks input:checked')].map(i=>i.value),
+      photos: photos.map(p => ({ data: p.data, mime: p.mime })) };
+    if (!data.sid || !data.type || !data.detail) { toast('เลือกนักเรียน ประเภท และกรอกรายละเอียดให้ครบ'); return; }
+    const b = $('#r-send'); b.disabled = true; b.textContent = 'กำลังส่ง…';
+    try{
+      const r = await api('report', { data });
+      toast(r.memo ? `ส่งแล้ว ออกบันทึกเลขที่ ${r.no} (ครั้งที่ ${r.count})` : `ส่งแล้ว ลงทะเบียนครั้งที่ ${r.count} (ยังไม่ออกบันทึก)`, 5000);
+      vReport();
+    }catch(e){ toast(e.message, 5000); b.disabled = false; b.textContent = 'ส่งรายงาน'; }
+  };
+}
+
+/* ---------- ชั้น / นักเรียน ---------- */
+let CUR_CLS = null;
+function scoreCls(s){ return s < 60 ? 's-60' : s < 80 ? 's-80' : 's-ok'; }
+async function vClass(){
+  CUR_CLS = CUR_CLS && ME.viewClasses.includes(CUR_CLS) ? CUR_CLS : ME.viewClasses[0];
+  $('#view').innerHTML = `<h2>${ME.user.role === 'homeroom' ? 'ชั้นของฉัน' : 'นักเรียน'}</h2>
+    <label for="c-cls">ชั้น</label>
+    <select id="c-cls">${ME.viewClasses.map(c=>`<option ${c===CUR_CLS?'selected':''}>${esc(c)}</option>`).join('')}</select>
+    <p class="muted" id="c-note">กำลังโหลด…</p><div id="c-list"></div>`;
+  $('#c-cls').onchange = () => { CUR_CLS = $('#c-cls').value; vClass(); };
+  try{
+    const r = await api('classView', { cls: CUR_CLS });
+    $('#c-note').textContent = `ปีการศึกษา ${r.ay} · ตัวเลขด้านขวาคือคะแนนความประพฤติคงเหลือ`;
+    $('#c-list').innerHTML = `<div class="list">${r.students.map(s=>`
+      <button class="item" type="button" data-id="${esc(s.id)}">
+        <span class="no">${esc(s.no)}</span>
+        <span class="main">${esc(s.name)}<div class="sub">${s.cases ? `${s.cases} เรื่อง` : 'ไม่มีเรื่อง'}${s.open ? ` · <span class="tag wait">รอให้การ ${s.open}</span>` : ''}</div></span>
+        <span class="score ${scoreCls(s.score)}">${s.score}</span>
+      </button>`).join('')}</div>`;
+    $('#c-list').querySelectorAll('.item').forEach(b => b.onclick = () => openStudent(b.dataset.id));
+  }catch(e){ $('#c-note').textContent = e.message; }
+}
+function sheet(html){
+  const d = document.createElement('div'); d.className = 'sheet';
+  d.innerHTML = `<div class="inner"><button class="back" type="button">‹ กลับ</button>${html}</div>`;
+  d.querySelector('.back').onclick = () => d.remove();
+  document.body.appendChild(d); return d;
+}
+async function openStudent(sid){
+  const d = sheet('<p class="muted">กำลังโหลด…</p>');
+  try{
+    const r = await api('studentView', { sid });
+    const s = r.student;
+    d.querySelector('.inner').innerHTML = `<button class="back" type="button">‹ กลับ</button>
+      <h2>${esc(s.name)}</h2><div class="muted">${esc(s.cls)} เลขที่ ${esc(s.no)} · เลขประจำตัว ${esc(s.id)}</div>
+      <div class="big"><b class="${scoreCls(r.score)}">${r.score}</b><span>คะแนนความประพฤติคงเหลือ ปีการศึกษา ${r.ay}</span></div>
+      <h3>เรื่องที่บันทึก</h3>
+      ${r.cases.length ? r.cases.map(c=>`<div class="card"><h3>${esc(c.type)} <span class="tag ${c.status==='รอให้การ'?'wait':'done'}">${esc(c.status)}</span></h3>
+        <div class="muted">${esc(c.date)}${c.no ? ' · บันทึก '+esc(c.no) : ''}${c.points ? ' · ตัด '+esc(c.points)+' คะแนน' : ''}</div>
+        <div>${esc(c.detail)}</div>${c.result ? `<div class="muted">ผลการพิจารณา: ${esc(c.result)}</div>` : ''}</div>`).join('') : '<p class="muted">ยังไม่มีเรื่องในปีการศึกษานี้</p>'}
+      <h3>ประวัติคะแนน</h3>
+      ${r.ledger.length ? `<div class="card"><table>${r.ledger.map(l=>`<tr><td>${esc(l.date)} ${esc(l.item)}</td><td class="${l.pts<0?'s-60':'s-ok'}">${l.pts>0?'+':''}${esc(l.pts)}</td></tr>`).join('')}</table></div>` : '<p class="muted">ยังไม่มีการตัดหรือคืนคะแนน</p>'}
+      ${ME.user.role === 'admin' ? `
+        <h3>คืนคะแนนจากกิจกรรมความดี</h3>
+        <label for="rs-act">กิจกรรม</label><input id="rs-act" placeholder="เช่น จิตอาสาทำความสะอาดโรงอาหาร 2 วัน">
+        <label for="rs-pts">คะแนนที่คืน (1–10)</label><input id="rs-pts" type="number" min="1" max="10" inputmode="numeric">
+        <button class="btn" id="rs-send" type="button">คืนคะแนน</button>` : ''}`;
+    d.querySelector('.back').onclick = () => { d.remove(); if (TAB === 'class') vClass(); };
+    const btn = d.querySelector('#rs-send');
+    if (btn) btn.onclick = async () => {
+      btn.disabled = true;
+      try{
+        const x = await api('restore', { data: { sid, activity: d.querySelector('#rs-act').value.trim(), points: d.querySelector('#rs-pts').value } });
+        toast(`คืน ${x.added} คะแนนแล้ว คงเหลือ ${x.score}`); d.remove(); openStudent(sid);
+      }catch(e){ toast(e.message, 5000); btn.disabled = false; }
+    };
+  }catch(e){ d.querySelector('.inner').insertAdjacentHTML('beforeend', `<p class="err">${esc(e.message)}</p>`); }
+}
+
+/* ---------- รอปิดเรื่อง (แอดมิน) ---------- */
+async function vCases(){
+  $('#view').innerHTML = `<h2>รอปิดเรื่อง</h2><p class="muted" id="k-note">กำลังโหลด…</p><div id="k-list"></div>`;
+  try{
+    const r = await api('openCases');
+    $('#k-note').textContent = r.cases.length ? `${r.cases.length} เรื่องรอให้การและพิจารณา` : 'ไม่มีเรื่องค้าง';
+    $('#k-list').innerHTML = r.cases.length ? `<div class="list">${r.cases.map(c=>`
+      <button class="item" type="button" data-id="${esc(c.id)}"><span class="main">${esc(c.name)} <span class="muted">${esc(c.cls)}</span>
+      <div class="sub">${esc(c.type)} ครั้งที่ ${esc(c.count)} · ${esc(c.date)} · ${esc(c.no)}</div></span></button>`).join('')}</div>` : '';
+    $('#k-list').querySelectorAll('.item').forEach(b => b.onclick = () => openCase(b.dataset.id));
+  }catch(e){ $('#k-note').textContent = e.message; }
+}
+async function openCase(id){
+  const d = sheet('<p class="muted">กำลังโหลด…</p>');
+  try{
+    const r = await api('getCase', { id }), c = r.item;
+    d.querySelector('.inner').innerHTML = `<button class="back" type="button">‹ กลับ</button>
+      <h2>${esc(c['ชื่อ-สกุล'])}</h2>
+      <div class="muted">${esc(c['ชั้น'])} เลขที่ ${esc(c['เลขที่'])} · คะแนนคงเหลือ ${r.score}</div>
+      <div class="card" style="margin-top:10px"><h3>${esc(c['ประเภท'])} ครั้งที่ ${esc(c['ครั้งที่'])} · ${esc(c['เลขที่บันทึก'])}</h3>
+        <div class="muted">${esc(c['วันที่เกิดเหตุ'])} ${esc(c['เวลา'])} น. · ${esc(c['สถานที่'])} · บันทึกโดย ${esc(c['ผู้บันทึก'])}</div>
+        <div>${esc(c['รายละเอียด'])}</div>
+        ${c['บันทึกข้อความ'] ? `<a class="btn ghost" style="text-align:center;text-decoration:none" href="${esc(c['บันทึกข้อความ'])}" target="_blank" rel="noopener">เปิดบันทึกข้อความเพื่อพิมพ์ส่วนที่ 1–2</a>` : ''}
+      </div>
+      <label>การให้การของนักเรียน (ส่วนที่ 2)</label>
+      <div class="checks" id="k-st">${['นักเรียนให้การแล้ว (ตามเอกสารลายมือแนบ)','นักเรียนปฏิเสธการให้การ'].map((s,i)=>`<label><input type="radio" name="st" value="${esc(s)}" ${i===0?'checked':''}> ${esc(s)}</label>`).join('')}</div>
+      <label for="k-res">ผลการพิจารณา</label>
+      <textarea id="k-res" placeholder="สรุปข้อเท็จจริงและเหตุผลของการพิจารณา"></textarea>
+      <label>การดำเนินการตามระเบียบ ศธ. 2548</label>
+      <div class="checks" id="k-act">${ACTIONS4.map(a=>`<label><input type="checkbox" value="${esc(a)}"> ${esc(a)}</label>`).join('')}</div>
+      <label for="k-pts">คะแนนที่ตัด (แนะนำ ${r.suggested} ตามระเบียบ ใส่ 0 ถ้าไม่ตัด)</label>
+      <input id="k-pts" type="number" min="0" inputmode="numeric" value="${r.suggested}">
+      <label for="k-photo">ถ่ายรูปคำให้การที่นักเรียนเขียน (ถ้ามี)</label>
+      <input id="k-photo" type="file" accept="image/*" capture="environment" multiple>
+      <div id="k-photos" class="photos"></div>
+      <button class="btn" id="k-send" type="button">ปิดเรื่องและออกส่วนที่ 3</button>`;
+    d.querySelector('.back').onclick = () => d.remove();
+    const photos = []; photoPicker('#k-photo', '#k-photos', photos);
+    d.querySelector('#k-send').onclick = async () => {
+      const data = { id, statement: d.querySelector('input[name=st]:checked').value, result: d.querySelector('#k-res').value.trim(),
+        actions: [...d.querySelectorAll('#k-act input:checked')].map(i=>i.value), points: d.querySelector('#k-pts').value,
+        photos: photos.map(p => ({ data: p.data, mime: p.mime })) };
+      if (!data.result){ toast('กรอกผลการพิจารณา'); return; }
+      const b = d.querySelector('#k-send'); b.disabled = true; b.textContent = 'กำลังบันทึก…';
+      try{
+        const x = await api('closeCase', { data });
+        toast(`ปิดเรื่องแล้ว คะแนนคงเหลือ ${x.score}${x.invite ? ' · ออกหนังสือเชิญผู้ปกครองแล้ว' : ''}`, 5000);
+        d.remove(); vCases();
+      }catch(e){ toast(e.message, 5000); b.disabled = false; b.textContent = 'ปิดเรื่องและออกส่วนที่ 3'; }
+    };
+  }catch(e){ d.querySelector('.inner').insertAdjacentHTML('beforeend', `<p class="err">${esc(e.message)}</p>`); }
+}
+
+/* ---------- สรุป ---------- */
+async function vSummary(){
+  $('#view').innerHTML = `<h2>สรุป</h2><p class="muted" id="s-note">กำลังโหลด…</p><div id="s-body"></div>`;
+  try{
+    const r = await api('summary');
+    const tbl = o => { const k = Object.keys(o).sort((a,b)=>o[b]-o[a]); return k.length ? `<table>${k.map(x=>`<tr><td>${esc(x)}</td><td>${o[x]}</td></tr>`).join('')}</table>` : '<p class="muted">ยังไม่มีข้อมูล</p>'; };
+    $('#s-note').textContent = `ปีการศึกษา ${r.ay}`;
+    $('#s-body').innerHTML = `
+      <div class="big"><b>${r.total}</b><span>เรื่องทั้งหมด · รอปิด ${r.open} · แจ้งเหตุนิรนามรอตรวจ ${r.anon}</span></div>
+      <div class="card"><h3>คะแนนต่ำกว่า 80</h3>${r.low.length ? `<table>${r.low.map(s=>`<tr><td>${esc(s.name)} <span class="muted">${esc(s.cls)}</span></td><td class="${scoreCls(s.score)}">${s.score}</td></tr>`).join('')}</table>` : '<p class="muted">ไม่มี</p>'}</div>
+      <div class="card"><h3>แยกประเภท</h3>${tbl(r.byType)}</div>
+      <div class="card"><h3>แยกชั้น</h3>${tbl(r.byClass)}</div>
+      ${ME.anonUrl ? `<div class="card"><h3>ลิงก์ฟอร์มแจ้งเหตุนิรนาม (ทำ QR Code ติดในโรงเรียน)</h3><div class="muted" style="word-break:break-all">${esc(ME.anonUrl)}</div></div>` : ''}`;
+  }catch(e){ $('#s-note').textContent = e.message; }
+}
+
+/* ---------- เริ่ม ---------- */
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+TOKEN = loadToken();
+if (TOKEN) start(); else showLogin('');
+</script>
+</body>
+</html>
